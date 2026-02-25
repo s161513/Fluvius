@@ -21,7 +21,7 @@ def load_parquet(sample_fraction=0.01):
         
         # If the dataset is large, we keep it manageable for the UI
         if len(df) > 10000:
-            st.warning(f"Data is very large ({len(df)} rows). Showing a 5% random sample for better performance.")
+            st.warning(f"Data is very large ({len(df)} rows). Showing a 1% random sample for better performance.")
             return df.sample(frac=sample_fraction, random_state=42)
         return df
     return None
