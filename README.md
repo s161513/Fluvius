@@ -24,8 +24,10 @@ docker compose up -d postgres
 
 ### 2. Run Data Ingestion
 
-Build and run the ingestion service to load the data into PostgreSQL:
+Je hebt twee opties om de data in de PostgreSQL database in te laden: de handmatige methode via de ingest container, of automatisch via Apache Airflow.
 
+#### Optie A: Manueel (Eenmalig)
+Bouw en draai de specifieke ingestie service om de data eenmalig in PostgreSQL in te laden:
 ```bash
 docker compose --profile ingest up ingest --build
 ```
