@@ -28,7 +28,7 @@ services:
     volumes:
       - ../ingest/data:/app/data:ro
     env_file:
-      - .env
+      - ../ingest/.env
     depends_on:
       postgres:
         condition: service_healthy
