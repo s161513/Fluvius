@@ -28,7 +28,23 @@ services:
     volumes:
       - ../ingest/data:/app/data:ro
     env_file:
-      - .env
+      - ../ingest/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  streamlit:
+    image: app-streamlit:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    ports:
+      - "8501:8501"
+    volumes:
+      - ../ingest/data:/app/data:ro
+      - ./dashboard.py:/app/dashboard.py:ro
+    environment:
+      - PARQUET_PATH=/app/data/1-19-totaal-gealloceerd-volume.parquet
     depends_on:
       postgres:
         condition: service_healthy
