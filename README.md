@@ -99,6 +99,30 @@ ORDER BY _file_version DESC
 LIMIT 20;
 ```
 
+## pgAdmin (PostgreSQL UI)
+
+This stack also includes pgAdmin.
+
+Open:
+- http://localhost:5050
+
+Default login (can be overridden via env vars in `app/docker-compose.yml`):
+- email: `admin@local`
+- password: `admin`
+
+### Add the Postgres server in pgAdmin
+
+1. In pgAdmin: **Add New Server**
+2. **General** tab
+   - Name: `local-postgres` (anything)
+3. **Connection** tab
+   - Host name/address: `postgres`
+   - Port: `5432`
+   - Maintenance database: `appdb` (or `$POSTGRES_DB`)
+   - Username: `appuser` (or `$POSTGRES_USER`)
+   - Password: `supersecret` (or `$POSTGRES_PASSWORD`)
+   - Save password: optional
+
 ## Notes / troubleshooting
 
 - If you add a new file like `...parquet-4`, wait up to ~1 minute for the scheduler to run.

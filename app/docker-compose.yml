@@ -18,6 +18,20 @@ services:
       timeout: 5s
       retries: 5
 
+  pgadmin:
+    image: dpage/pgadmin4:8
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
   ingest:
     profiles: ["ingest"]
     image: data-engineering:latest
@@ -44,7 +58,7 @@ services:
       - ../ingest/data:/app/data:ro
       - ./dashboard.py:/app/dashboard.py:ro
     environment:
-      - PARQUET_PATH=/app/data/1-19-totaal-gealloceerd-volume.parquet
+      - DATA_FOLDER=/app/data
     depends_on:
       postgres:
         condition: service_healthy
@@ -76,3 +90,4 @@ services:
 
 volumes:
   pgdata:
+  pgadmin-data:

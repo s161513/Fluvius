@@ -12,19 +12,40 @@ This dashboard visualizes the data ingested from the parquet file or database.
 
 @st.cache_data
 def load_parquet(sample_fraction=0.01):
-    # Attempt to load from the data folder
-    parquet_path = os.environ.get("PARQUET_PATH", "../ingest/data/1-19-totaal-gealloceerd-volume.parquet")
-    if os.path.exists(parquet_path):
-        # We load a small random sample or use specific filtering if the dataset is large
-        # to prevent Streamlit from becoming unresponsive
-        df = pd.read_parquet(parquet_path)
-        
-        # If the dataset is large, we keep it manageable for the UI
-        if len(df) > 10000:
-            st.warning(f"Data is very large ({len(df)} rows). Showing a 1% random sample for better performance.")
-            return df.sample(frac=sample_fraction, random_state=42)
-        return df
-    return None
+    # Get the data folder path from the environment variable
+    data_folder = os.getenv("DATA_FOLDER", "/app/data")
+
+    # Resolve the absolute path of the data folder
+    data_folder = os.path.abspath(data_folder)
+
+    # Check if the data folder exists
+    if not os.path.exists(data_folder):
+        st.error(f"Data folder not found at '{data_folder}'. Please check the DATA_FOLDER environment variable.")
+        return None
+
+    # Find all versioned parquet files in the folder
+    parquet_files = [
+        f for f in os.listdir(data_folder)
+        if f.startswith("1-19-totaal-gealloceerd-volume.parquet")
+    ]
+
+    if not parquet_files:
+        st.error("No parquet files found in the data folder. Please check the folder and file naming.")
+        return None
+
+    # Sort files to get the latest version
+    parquet_files.sort(key=lambda x: int(x.split("-")[-1]))
+    latest_file = parquet_files[-1]
+    parquet_path = os.path.join(data_folder, latest_file)
+
+    # Load the parquet file
+    df = pd.read_parquet(parquet_path)
+
+    # If the dataset is large, sample it for better performance
+    if len(df) > 10000:
+        st.warning(f"Data is very large ({len(df)} rows). Showing a 1% random sample for better performance.")
+        return df.sample(frac=sample_fraction, random_state=42)
+    return df
 
 data = load_parquet()
 
